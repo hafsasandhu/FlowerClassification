@@ -6,14 +6,19 @@ from PIL import Image
 from ImageClassification import OptiSA, device
 import requests
 import gdown
+import tempfile
 
 app = Flask(__name__)
 
 # Function to download model if not exists
 def download_model():
-    model_path = '/tmp/best_opti_sa.pth'
+    # Use system's temp directory instead of hardcoded /tmp
+    temp_dir = tempfile.gettempdir()
+    model_path = os.path.join(temp_dir, 'best_opti_sa.pth')
+    
     if not os.path.exists(model_path):
-        model_url = "https://drive.google.com/file/d/1PKqs1vZ90QOWkMftPzeDagYA_rOcMRt2/view?usp=sharing"
+        # Use the direct download link format for Google Drive
+        model_url = "https://drive.google.com/uc?id=1PKqs1vZ90QOWkMftPzeDagYA_rOcMRt2"
         gdown.download(model_url, model_path, quiet=False)
     return model_path
 
@@ -59,8 +64,9 @@ def predict():
         return jsonify({'error': 'No file selected'})
     
     if file:
-        # Save the uploaded file temporarily
-        temp_path = '/tmp/temp_image.jpg'  # Use /tmp directory for Vercel
+        # Use system's temp directory
+        temp_dir = tempfile.gettempdir()
+        temp_path = os.path.join(temp_dir, 'temp_image.jpg')
         file.save(temp_path)
         
         try:
