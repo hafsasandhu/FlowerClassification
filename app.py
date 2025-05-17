@@ -4,28 +4,13 @@ import torch
 from torchvision import transforms
 from PIL import Image
 from ImageClassification import OptiSA, device
-import requests
-import gdown
 import tempfile
 
 app = Flask(__name__)
 
-# Function to download model if not exists
-def download_model():
-    # Use system's temp directory instead of hardcoded /tmp
-    temp_dir = tempfile.gettempdir()
-    model_path = os.path.join(temp_dir, 'best_opti_sa.pth')
-    
-    if not os.path.exists(model_path):
-        # Use the direct download link format for Google Drive
-        model_url = "https://drive.google.com/uc?id=1PKqs1vZ90QOWkMftPzeDagYA_rOcMRt2"
-        gdown.download(model_url, model_path, quiet=False)
-    return model_path
-
 # Load the model
 model = OptiSA(num_classes=5).to(device)
-model_path = download_model()
-model.load_state_dict(torch.load(model_path, map_location=device))
+model.load_state_dict(torch.load('best_opti_sa.pth', map_location=device))
 model.eval()
 
 # Define the image transformation
