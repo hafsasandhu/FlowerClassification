@@ -49,7 +49,7 @@ def predict():
     
     if file:
         # Save the uploaded file temporarily
-        temp_path = 'temp_image.jpg'
+        temp_path = '/tmp/temp_image.jpg'  # Use /tmp directory for Vercel
         file.save(temp_path)
         
         try:
@@ -57,7 +57,8 @@ def predict():
             predicted_class, confidence = predict_image(temp_path)
             
             # Clean up
-            os.remove(temp_path)
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
             
             return jsonify({
                 'prediction': predicted_class,
@@ -68,5 +69,6 @@ def predict():
                 os.remove(temp_path)
             return jsonify({'error': str(e)})
 
+# For local development
 if __name__ == '__main__':
     app.run(debug=True) 
